@@ -41,6 +41,8 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'max_total_price' => 100000,
+            'max_page_count' => 10
         ]);
 
         event(new Registered($user));

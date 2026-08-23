@@ -2,9 +2,12 @@ import { SnackbarProps } from "@mui/material";
 
 export interface User {
     id: number;
+    role_id: number;
     name: string;
     email: string;
     email_verified_at?: string;
+    max_total_price: number;
+    max_page_count: number;
 }
 
 export type PageProps<

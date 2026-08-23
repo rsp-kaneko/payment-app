@@ -20,18 +20,13 @@ const AuthenticatedLayout: FC<Props> = (props) => {
     const { children, pageTitle = "", loading = false, paymentParams = null, handleSearchEvent = undefined } = props
 
     const {OPEN_ASIDE} = useContext(RootContext)
-    const [logoutLoad, setLogoutLoad] = useState(false)
-
-    const handleLogoutEvent = () => {
-        setLogoutLoad(true)
-        axios.post(route("logout")).then(() => location.reload())
-    }
+    const [pageLoad, setPageLoad] = useState(false)
 
     return (
         <Box sx={{ bgcolor: "#e5e5e5", minHeight: "100vh" }}>
             <Head title={pageTitle} />
 
-            {(loading || logoutLoad) && (
+            {(loading || pageLoad) && (
                 <LoadingContent />
             )}
 
@@ -62,7 +57,7 @@ const AuthenticatedLayout: FC<Props> = (props) => {
                 <PcAside
                     paymentParams={paymentParams}
                     handleSearchEvent={handleSearchEvent}
-                    handleLogoutEvent={handleLogoutEvent}
+                    setPageLoad={setPageLoad}
                 />
             </Box>
 

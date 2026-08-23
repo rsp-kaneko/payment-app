@@ -23,9 +23,9 @@ class PaymentController extends Controller
             $month = $request->month;
             $min_price = $request->minPrice;
             $max_price = $request->maxPrice;
-            $tag_id = $request->tagNo;
             $start_date = $request->startDate;
             $end_date = $request->endDate;
+            $max_page_count = Auth::user()->max_page_count;
 
             $query = Auth::user()->payments()
                 ->where('delete_flg', 0)
@@ -53,7 +53,7 @@ class PaymentController extends Controller
                 ->orderBy('payment_date', 'desc');
 
             $payment_total_price = (clone $query)->sum('price');
-            $payment_paginate = $query->paginate(10);
+            $payment_paginate = $query->paginate($max_page_count);
 
         } catch (Exception $e) {
             $error = $e->getMessage();

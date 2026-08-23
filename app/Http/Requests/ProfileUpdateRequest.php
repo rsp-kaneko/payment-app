@@ -26,6 +26,8 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+            'max_total_price' => ['required', 'integer', 'min:100', 'max:999999999'],
+            'max_page_count' => ['required', 'integer', 'min:5', 'max:100']
         ];
     }
 }

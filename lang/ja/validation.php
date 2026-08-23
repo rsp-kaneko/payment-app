@@ -262,6 +262,8 @@ return [
         'updated_at' => '更新日',
         'username' => 'ユーザー名',
         'year' => '年',
+        'max_total_price' => '限度額',
+        'max_page_count' => 'データ表示数'
     ],
 
 ];

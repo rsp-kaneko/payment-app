@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TopController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -42,5 +43,10 @@ Route::controller(TagController::class)->prefix('tags')->middleware(['auth'])->g
     Route::patch('/{id}/update', 'update')->name('tags.update');
     Route::delete('/{id}/destroy', 'destroy')->name('tags.destroy');
 });
+
+Route::controller(UserController::class)->prefix('users')->middleware(['auth'])->group(function() {
+    Route::get('/userManager', 'index')->name('users.index');
+});
+
 
 require __DIR__.'/auth.php';

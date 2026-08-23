@@ -3,10 +3,11 @@ import InputError from '@/Components/Default/InputError';
 import InputLabel from '@/Components/Default/InputLabel';
 import PrimaryButton from '@/Components/Default/PrimaryButton';
 import TextInput from '@/Components/Default/TextInput';
+import RootContext from '@/Contexts/RootContext';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Button } from '@mui/material';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useContext } from 'react';
 
 export default function Login({
     status,
@@ -21,10 +22,15 @@ export default function Login({
         remember: false as boolean,
     });
 
+    const {SET_ALERT} = useContext(RootContext)
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
         post(route('login'), {
+            onError: () => {
+                SET_ALERT({open: true, type: "error", message: "入力内容に誤りがあります"})
+            },
             onFinish: () => reset('password'),
         });
     };

@@ -4,6 +4,7 @@ import { FC, useContext, useEffect, useState } from "react"
 import TagSettingDialog from "./TagSettingDialog"
 import MonthlyTagDataCard from "./MonthlyTagDataCard"
 import RootContext from "@/Contexts/RootContext"
+import NotFound from "../MainContents/NotFound"
 
 type Props = {
     year?: number
@@ -55,6 +56,9 @@ const TagHistoryContent: FC<Props> = (props) => {
                 </Box>
             ) : (
                 <Grid container spacing={2}>
+                    {monthlyTags.length === 0 && (
+                        <NotFound />
+                    )}
                     {monthlyTags.length !== 0 && monthlyTags.map((tagData) => (
                         <Grid key={tagData.id} size={{ xs: 12, md: 6, lg: 4 }}>
                                 <MonthlyTagDataCard

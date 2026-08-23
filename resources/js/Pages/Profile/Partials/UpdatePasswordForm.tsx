@@ -2,9 +2,11 @@ import InputError from '@/Components/Default/InputError';
 import InputLabel from '@/Components/Default/InputLabel';
 import PrimaryButton from '@/Components/Default/PrimaryButton';
 import TextInput from '@/Components/Default/TextInput';
+import ProfileCard from '@/Components/ProfileContents/ProfileCard';
+import RootContext from '@/Contexts/RootContext';
 import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
-import { FormEventHandler, useRef } from 'react';
+import { FormEventHandler, useContext, useRef } from 'react';
 
 export default function UpdatePasswordForm({
     className = '',
@@ -28,12 +30,17 @@ export default function UpdatePasswordForm({
         password_confirmation: '',
     });
 
+    const {SET_ALERT} = useContext(RootContext)
+
     const updatePassword: FormEventHandler = (e) => {
         e.preventDefault();
 
         put(route('password.update'), {
             preserveScroll: true,
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                SET_ALERT({open: true, type: "success", message: "パスワードを変更しました"})
+                reset()
+            },
             onError: (errors) => {
                 if (errors.password) {
                     reset('password', 'password_confirmation');
@@ -49,23 +56,20 @@ export default function UpdatePasswordForm({
     };
 
     return (
-        <section className={className}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Update Password
-                </h2>
-
-                <p className="mt-1 text-sm text-gray-600">
-                    Ensure your account is using a long, random password to stay
-                    secure.
-                </p>
-            </header>
-
+        <ProfileCard
+            title={
+                <>
+                    <i className="fa-solid fa-key mr-1"></i>
+                    パスワード変更
+                </>
+            }
+            subTitle="最低8文字以上で変更可能"
+        >
             <form onSubmit={updatePassword} className="mt-6 space-y-6">
                 <div>
                     <InputLabel
                         htmlFor="current_password"
-                        value="Current Password"
+                        value="現在のパスワード"
                     />
 
                     <TextInput
@@ -87,7 +91,7 @@ export default function UpdatePasswordForm({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password" value="New Password" />
+                    <InputLabel htmlFor="password" value="新しいパスワード" />
 
                     <TextInput
                         id="password"
@@ -105,7 +109,7 @@ export default function UpdatePasswordForm({
                 <div>
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Confirm Password"
+                        value="新しいパスワード（確認の為再度入力）"
                     />
 
                     <TextInput
@@ -126,7 +130,7 @@ export default function UpdatePasswordForm({
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <PrimaryButton disabled={processing}>パスワード変更</PrimaryButton>
 
                     <Transition
                         show={recentlySuccessful}
@@ -141,6 +145,6 @@ export default function UpdatePasswordForm({
                     </Transition>
                 </div>
             </form>
-        </section>
+        </ProfileCard>
     );
 }

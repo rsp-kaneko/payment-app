@@ -1,26 +1,40 @@
 import { Box, IconButton, Typography } from "@mui/material";
-import { FC, useContext, useState } from "react";
+import { Dispatch, FC, SetStateAction, useContext, useState } from "react";
 import AsideButton from "./AsideButton";
 import { PaymentParams } from "@/types/payment";
 import SearchFormDialog from "./SearchFormDialog";
 import RootContext from "@/Contexts/RootContext";
+import axios from "axios";
 
 type Props = {
     paymentParams?: PaymentParams | null
     handleSearchEvent?: (props: PaymentParams) => void
-    handleLogoutEvent: () => void
+    setPageLoad: Dispatch<SetStateAction<boolean>>
 }
 
 const PcAside: FC<Props> = (props) => {
-    const { paymentParams = null, handleSearchEvent = undefined, handleLogoutEvent } = props
+    const { paymentParams = null, handleSearchEvent = undefined, setPageLoad } = props
 
     const {OPEN_TAG, SET_OPEN_TAG, SET_OPEN_ASIDE} = useContext(RootContext)
     const [openSearchDialog, setOpenSearchDialog] = useState(false)
 
     const onCloseSearchDialog = () => setOpenSearchDialog(false)
+
     const handleOpenTag = () => {
         SET_OPEN_TAG(!OPEN_TAG)
         SET_OPEN_ASIDE(false)
+    }
+    const handleDataPageEvent = () => {
+        setPageLoad(true)
+        location.href = route("top")
+    }
+    const handleUserSettingEvent = () => {
+        setPageLoad(true)
+        location.href = route("profile.edit")
+    }
+    const handleLogoutEvent = () => {
+        setPageLoad(true)
+        axios.post(route("logout")).then(() => location.reload())
     }
 
     return (
@@ -38,7 +52,7 @@ const PcAside: FC<Props> = (props) => {
                     <Typography>閉じる</Typography>
                 </IconButton>
                 <Box sx={{display: "flex", alignItems: "end"}}>
-                    <img src="./favicon.ico" width="64px" />
+                    <img src="/favicon.ico" width="64px" />
                     <Typography component="span" sx={{fontSize: "1.3rem", fontWeight: "bold"}}>帳簿管理システム</Typography>
                 </Box>
             </Box>
@@ -68,13 +82,13 @@ const PcAside: FC<Props> = (props) => {
                     </AsideButton>
                 </>
             )}
-            <AsideButton active={route().current("top")} onClick={() => location.href = route("top")}>
+            <AsideButton active={route().current("top")} onClick={handleDataPageEvent}>
                 <Box>
                     <i className="fa-solid fa-database mr-3"></i>
                     データ
                 </Box>
             </AsideButton>
-            <AsideButton active={route().current("profile.edit")} onClick={() => location.href = route("profile.edit")}>
+            <AsideButton active={route().current("profile.edit")} onClick={handleUserSettingEvent}>
                 <Box>
                     <i className="fa-solid fa-gear mr-3"></i>
                     ユーザー設定

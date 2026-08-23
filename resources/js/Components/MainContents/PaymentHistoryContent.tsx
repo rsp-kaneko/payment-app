@@ -1,9 +1,10 @@
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { Dispatch, FC, SetStateAction } from "react";
 import PaymentDataCard from "./PaymentDataCard";
 import { PaymentPaginate } from "@/types/payment";
 import DeletePaymentCard from "./DeletePaymentCard";
 import { MonthlyPaymentTagList } from "@/types/tag";
+import NotFound from "./NotFound";
 
 type Props = {
     paymentPaginate: PaymentPaginate | null
@@ -19,6 +20,9 @@ const PaymentHistoryContent: FC<Props> = (props) => {
         <>
             <Box>
                 <Grid container spacing={2}>
+                    {paymentPaginate && paymentPaginate.data.length === 0 && (
+                        <NotFound />
+                    )}
                     {paymentPaginate && paymentPaginate.data.map((payment) => (
                         <Grid size={{ xs: 12, lg: 6 }} key={payment.id}>
                             <PaymentDataCard

@@ -2,9 +2,11 @@ import InputError from '@/Components/Default/InputError';
 import InputLabel from '@/Components/Default/InputLabel';
 import PrimaryButton from '@/Components/Default/PrimaryButton';
 import TextInput from '@/Components/Default/TextInput';
+import ProfileCard from '@/Components/ProfileContents/ProfileCard';
+import RootContext from '@/Contexts/RootContext';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useContext } from 'react';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -16,34 +18,44 @@ export default function UpdateProfileInformation({
     className?: string;
 }) {
     const user = usePage().props.auth.user;
+    const { SET_ALERT } = useContext(RootContext);
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
             email: user.email,
+            max_total_price: user.max_total_price,
+            max_page_count: user.max_page_count
         });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update'));
+        patch(route('profile.update'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                SET_ALERT({
+                    open: true,
+                    type: 'success',
+                    message: 'ユーザー情報を更新しました',
+                });
+            },
+        });
     };
 
     return (
-        <section className={className}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Profile Information
-                </h2>
-
-                <p className="mt-1 text-sm text-gray-600">
-                    Update your account's profile information and email address.
-                </p>
-            </header>
-
+        <ProfileCard
+            title={
+                <>
+                    <i className="fa-solid fa-user mr-1"></i>
+                    ユーザー情報
+                </>
+            }
+            subTitle="ユーザー情報の更新"
+        >
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="name" value="ユーザー名" />
 
                     <TextInput
                         id="name"
@@ -97,8 +109,40 @@ export default function UpdateProfileInformation({
                     </div>
                 )}
 
+                <div>
+                    <InputLabel htmlFor="max_total_price" value="月ごとの限度額(最大￥999,999,999)" />
+
+                    <TextInput
+                        id="max_total_price"
+                        type="number"
+                        className="mt-1 block w-full"
+                        value={data.max_total_price}
+                        onChange={(e) => setData('max_total_price', Number(e.target.value))}
+                        required
+                        autoComplete="maxTotalPrice"
+                    />
+
+                    <InputError className="mt-2" message={errors.max_total_price} />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="max_page_count" value="1ページ毎のデータ表示数(最大100件)" />
+
+                    <TextInput
+                        id="max_page_count"
+                        type="number"
+                        className="mt-1 block w-full"
+                        value={data.max_page_count}
+                        onChange={(e) => setData('max_page_count', Number(e.target.value))}
+                        required
+                        autoComplete="maxTotalPrice"
+                    />
+
+                    <InputError className="mt-2" message={errors.max_page_count} />
+                </div>
+
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <PrimaryButton disabled={processing}>ユーザー情報変更</PrimaryButton>
 
                     <Transition
                         show={recentlySuccessful}
@@ -113,6 +157,6 @@ export default function UpdateProfileInformation({
                     </Transition>
                 </div>
             </form>
-        </section>
+        </ProfileCard>
     );
 }

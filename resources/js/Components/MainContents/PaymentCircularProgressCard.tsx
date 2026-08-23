@@ -2,6 +2,7 @@ import { Box, Button, Card, CardContent, CircularProgress, Typography } from "@m
 import { FC, useMemo, useState } from "react"
 import AddPaymentFormDialog from "./AddPaymentFormDialog"
 import { PaymentParams } from "@/types/payment"
+import { usePage } from "@inertiajs/react"
 
 type Props = {
     totalPrice: number
@@ -10,13 +11,14 @@ type Props = {
 
 const PaymentCircularProgressCard: FC<Props> = (props) => {
     const { totalPrice, paymentParams } = props
+    const user = usePage().props.auth.user
 
     const [openAddDialog, setOpenAddDialog] = useState(false)
 
     const onCloseAddDialog = () => setOpenAddDialog(false)
 
     const totalPercent = useMemo(() => {
-        const percent = Math.floor((100 / 100000) * totalPrice)
+        const percent = Math.floor((100 / user.max_total_price) * totalPrice)
         return percent < 100 ? percent : 100
     }, [totalPrice])
 
@@ -67,7 +69,7 @@ const PaymentCircularProgressCard: FC<Props> = (props) => {
                                     ￥ {Number(totalPrice).toLocaleString("ja-JP")} 円
                                 </Typography>
                                 <Typography component="p">
-                                    最大 ￥ {Number(100000).toLocaleString("ja-JP")} 円
+                                    最大 ￥ {Number(user.max_total_price).toLocaleString("ja-JP")} 円
                                 </Typography>
                             </Box>
                         </Box>

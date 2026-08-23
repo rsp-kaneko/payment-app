@@ -4,7 +4,9 @@ import InputLabel from '@/Components/Default/InputLabel';
 import Modal from '@/Components/Default/Modal';
 import SecondaryButton from '@/Components/Default/SecondaryButton';
 import TextInput from '@/Components/Default/TextInput';
+import ProfileCard from '@/Components/ProfileContents/ProfileCard';
 import { useForm } from '@inertiajs/react';
+import { Typography } from '@mui/material';
 import { FormEventHandler, useRef, useState } from 'react';
 
 export default function DeleteUserForm({
@@ -50,35 +52,33 @@ export default function DeleteUserForm({
     };
 
     return (
-        <section className={`space-y-6 ${className}`}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Delete Account
-                </h2>
-
-                <p className="mt-1 text-sm text-gray-600">
-                    Once your account is deleted, all of its resources and data
-                    will be permanently deleted. Before deleting your account,
-                    please download any data or information that you wish to
-                    retain.
-                </p>
-            </header>
-
-            <DangerButton onClick={confirmUserDeletion}>
-                Delete Account
-            </DangerButton>
+        <>
+            <ProfileCard
+                title={
+                    <>
+                        <i className="fa-solid fa-user-slash mr-1"></i>
+                        アカウント削除
+                    </>
+                }
+            >
+                <Typography component="p" sx={{mb: 2}}>
+                    アカウントを削除すると、そのアカウントに含まれるすべてのリソースとデータは完全に削除されます。<br />
+                    アカウントを削除する前に、保存しておきたいデータや情報はすべてダウンロードしてください。
+                </Typography>
+                <DangerButton onClick={confirmUserDeletion}>
+                    アカウントを削除する
+                </DangerButton>
+            </ProfileCard>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900">
-                        Are you sure you want to delete your account?
+                        本当に削除しますか？
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-600">
-                        Once your account is deleted, all of its resources and
-                        data will be permanently deleted. Please enter your
-                        password to confirm you would like to permanently delete
-                        your account.
+                        アカウントを削除すると、そのアカウントに含まれるすべてのリソースとデータは完全に削除されます。
+                        アカウントを完全に削除することを確認するため、パスワードを入力してください。
                     </p>
 
                     <div className="mt-6">
@@ -110,15 +110,15 @@ export default function DeleteUserForm({
 
                     <div className="mt-6 flex justify-end">
                         <SecondaryButton onClick={closeModal}>
-                            Cancel
+                            キャンセル
                         </SecondaryButton>
 
                         <DangerButton className="ms-3" disabled={processing}>
-                            Delete Account
+                            アカウントを削除する
                         </DangerButton>
                     </div>
                 </form>
             </Modal>
-        </section>
+        </>
     );
 }
