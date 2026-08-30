@@ -46,6 +46,8 @@ Route::controller(TagController::class)->prefix('tags')->middleware(['auth'])->g
 
 Route::controller(UserController::class)->prefix('users')->middleware(['auth'])->group(function() {
     Route::get('/userManager', 'index')->name('users.index');
+    Route::get('/getAllUsers', 'getAllUsers')->name('users.getAllUsers');
+    Route::patch('/{id}/update', 'update')->name('users.update');
 });
 
 
