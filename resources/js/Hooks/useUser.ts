@@ -12,10 +12,14 @@ const useUser = () => {
         name: "",
         email: "",
         password: "",
+        password_confirmation: "",
         max_total_price: 0,
         max_page_count: 0,
         delete_flg: 0
     })
+
+    const emailValidate = (email: string) =>
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(email)
 
     const getAllUsers = useCallback(() => {
         setUserLoad(true)
@@ -26,6 +30,23 @@ const useUser = () => {
                     console.log(res.data.users)
                 } else {
                     SET_ALERT({open: true, type: "error", message: "ユーザー情報を取得中にエラーが発生しました"})
+                    console.error(res.data.error)
+                }
+            })
+            .catch((error) => console.error(error))
+            .finally(() => setUserLoad(false))
+    }, [])
+
+    const registUser = useCallback((data: UserRequest) => {
+        setUserLoad(true)
+        axios.post(route('users.store'), data)
+            .then((res) => {
+                if (res.data.status === 200) {
+                    SET_ALERT({open: true, type: "success", message: "ユーザーを登録しました"})
+                    SET_REFRESH((prev) => prev + 1)
+                    console.log(res.data.users)
+                } else {
+                    SET_ALERT({open: true, type: "error", message: "ユーザー登録時にエラーが発生しました"})
                     console.error(res.data.error)
                 }
             })
@@ -51,11 +72,13 @@ const useUser = () => {
 
 
     return {
+        emailValidate,
         userLoad,
         users,
         userData,
         setUserData,
         getAllUsers,
+        registUser,
         updateUser
     }
 }

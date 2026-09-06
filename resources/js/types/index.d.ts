@@ -21,6 +21,7 @@ export interface UserRequest {
     name?: string;
     email?: string;
     password?: string;
+    password_confirmation?: string;
     max_total_price?: number;
     max_page_count?: number;
     delete_flg?: number;

@@ -18,7 +18,7 @@ const AlertSnackbar: FC = () => {
                 severity={ALERT.type}
                 variant="filled"
                 onClose={onClose}
-                sx={{width: "100%"}}
+                sx={{width: "100%", whiteSpace: "pre-wrap"}}
             >
                 {ALERT.message}
             </Alert>

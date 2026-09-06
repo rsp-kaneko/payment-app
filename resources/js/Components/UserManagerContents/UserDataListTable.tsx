@@ -10,7 +10,7 @@ const UserDataListTable: FC<Props> = (props) => {
     const {users} = props
 
     return (
-        <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2, overflow: "hidden" }}>
+        <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2, overflow: "auto" }}>
             <Table sx={{ minWidth: 650 }} aria-label="user table">
                 <TableHead sx={{ bgcolor: "#1976d2" }}>
                     <TableRow>
