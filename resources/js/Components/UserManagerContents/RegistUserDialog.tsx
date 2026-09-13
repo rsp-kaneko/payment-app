@@ -1,42 +1,86 @@
 import RootContext from "@/Contexts/RootContext"
 import useUser from "@/Hooks/useUser"
-import { Button, Dialog, DialogContent, DialogTitle, IconButton, InputAdornment, Stack, TextField, Typography } from "@mui/material"
-import { FC, useContext } from "react"
+import { User, UserError } from "@/types"
+import { Button, Dialog, DialogContent, DialogTitle, IconButton, InputAdornment, TextField, Typography } from "@mui/material"
+import { FC, useContext, useEffect } from "react"
 
 type Props = {
+    users: User[]
     open: boolean
     onClose: () => void
 }
 
 const RegistUserDialog: FC<Props> = (props) => {
-    const {open, onClose} = props
-    const {SET_ALERT} = useContext(RootContext)
-    const {emailValidate, userData, setUserData, userLoad, registUser} = useUser()
+    const {users, open, onClose} = props
+    const {REFRESH, SET_ALERT} = useContext(RootContext)
+    const {emailValidate, userData, setUserData, userError, setUserError, userLoad, registUser} = useUser()
+
+    useEffect(() => {
+        onClose()
+    }, [REFRESH])
+
+    useEffect(() => {
+        if (open) {
+            setUserData({
+                id: 0,
+                name: "",
+                email: "",
+                password: "",
+                password_confirmation: "",
+                max_total_price: 0,
+                max_page_count: 0,
+                delete_flg: 0
+            })
+            setUserError({
+                name: "",
+                email: "",
+                password: "",
+                max_total_price: "",
+                max_page_count: ""
+            })
+        }
+    }, [open])
 
     const handleRegistUser = () => {
-        let error = ""
-        if (!userData.name) {
-            error += "ユーザー名：必須です\n"
-        } else if (userData.name.length > 20) {
-            error += "ユーザー名：20文字以内まで\n"
-        }
-        if (!userData.email) {
-            error += "Email：必須です\n"
-        } else if (!emailValidate(userData.email)) {
-            error += "Email：正しく入力してください\n"
-        }
-        if (!userData.password) {
-            error += "パスワード：必須です\n"
-        } else if (userData.password.length < 8) {
-            error += "パスワード：最低8文字以上\n"
-        } else if (userData.password !== userData.password_confirmation) {
-            error += "パスワード：確認用パスワードと一致しません\n"
+        const newErrors: UserError = {
+            name: "",
+            email: "",
+            password: "",
+            max_total_price: "",
+            max_page_count: ""
         }
 
-        if (error) {
-            SET_ALERT({open: true, type: "error", message: error})
-        } else {
+        if (!userData.name) {
+            newErrors.name = "ユーザー名は必須です"
+        } else if (userData.name.length > 20) {
+            newErrors.name = "ユーザー名は20文字以内まで"
+        } else if (users.find((user) => user.name === userData.name)) {
+            newErrors.name = "そのユーザーは既に存在します"
+        }
+
+        if (!userData.email) {
+            newErrors.email = "Emailは必須です"
+        } else if (!emailValidate(userData.email)) {
+            newErrors.email = "正しい形式で入力してください"
+        } else if (users.find((user) => user.email === userData.email)) {
+            newErrors.email = "そのEmailは既に登録されています"
+        }
+
+        if (!userData.password) {
+            newErrors.password = "パスワードは必須です"
+        } else if (userData.password.length < 8) {
+            newErrors.password = "半角英数字記号8文字以上"
+        } else if (userData.password !== userData.password_confirmation) {
+            newErrors.password = "確認用パスワードと一致しません"
+        }
+
+        setUserError(newErrors)
+
+        const hasError = Object.values(newErrors).some((err) => err !== "")
+        if (!hasError) {
             registUser(userData)
+        } else {
+            SET_ALERT({open: true, type: "error", message: "入力内容に誤りがあります"})
         }
     }
 
@@ -59,6 +103,8 @@ const RegistUserDialog: FC<Props> = (props) => {
                     fullWidth
                     id="name"
                     label="ユーザー名"
+                    error={userError.name != ""}
+                    helperText={userError.name}
                     name="name"
                     placeholder="20文字以内"
                     value={userData.name}
@@ -83,6 +129,8 @@ const RegistUserDialog: FC<Props> = (props) => {
                     fullWidth
                     id="email"
                     label="Email"
+                    error={userError.email != ""}
+                    helperText={userError.email}
                     name="email"
                     placeholder="example@xxx.yyy.zzz"
                     value={userData.email}
@@ -107,6 +155,8 @@ const RegistUserDialog: FC<Props> = (props) => {
                     fullWidth
                     name="password"
                     label="パスワード"
+                    error={userError.password != ""}
+                    helperText={userError.password}
                     id="password"
                     placeholder="最低8文字以上"
                     value={userData.password}
@@ -131,6 +181,7 @@ const RegistUserDialog: FC<Props> = (props) => {
                     fullWidth
                     name="confirmPassword"
                     label="パスワード（確認）"
+                    error={userError.password != ""}
                     id="confirmPassword"
                     placeholder="最低8文字以上"
                     value={userData.password_confirmation}

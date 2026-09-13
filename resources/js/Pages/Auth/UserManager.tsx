@@ -39,6 +39,7 @@ const UserManager: FC = () => {
             </Box>
 
             <RegistUserDialog
+                users={users}
                 open={openRegistDialog}
                 onClose={() => setOpenRegistDialog(false)}
             />

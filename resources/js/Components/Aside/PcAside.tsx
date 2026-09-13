@@ -5,6 +5,7 @@ import { PaymentParams } from "@/types/payment";
 import SearchFormDialog from "./SearchFormDialog";
 import RootContext from "@/Contexts/RootContext";
 import axios from "axios";
+import { usePage } from "@inertiajs/react";
 
 type Props = {
     paymentParams?: PaymentParams | null
@@ -17,6 +18,7 @@ const PcAside: FC<Props> = (props) => {
 
     const {OPEN_TAG, SET_OPEN_TAG, SET_OPEN_ASIDE} = useContext(RootContext)
     const [openSearchDialog, setOpenSearchDialog] = useState(false)
+    const user = usePage().props.auth.user
 
     const onCloseSearchDialog = () => setOpenSearchDialog(false)
 
@@ -35,6 +37,10 @@ const PcAside: FC<Props> = (props) => {
     const handleLogoutEvent = () => {
         setPageLoad(true)
         axios.post(route("logout")).then(() => location.reload())
+    }
+    const handleOpenUserManager = () => {
+        setPageLoad(true)
+        location.href = route("users.index")
     }
 
     return (
@@ -57,6 +63,14 @@ const PcAside: FC<Props> = (props) => {
                 </Box>
             </Box>
 
+            {user.role_id == 1 && (
+                <AsideButton active={route().current("users.index")} onClick={handleOpenUserManager}>
+                    <Box>
+                        <i className="fa-solid fa-user-gear mr-3"></i>
+                        ユーザー管理
+                    </Box>
+                </AsideButton>
+            )}
             {route().current("top") && (
                 <>
                     <AsideButton active={paymentParams?.searchType === "all"} onClick={() => setOpenSearchDialog(true)}>

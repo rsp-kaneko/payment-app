@@ -1,5 +1,5 @@
 import RootContext from "@/Contexts/RootContext"
-import { User, UserRequest } from "@/types"
+import { User, UserError, UserRequest } from "@/types"
 import axios from "axios"
 import { useCallback, useContext, useState } from "react"
 
@@ -16,6 +16,13 @@ const useUser = () => {
         max_total_price: 0,
         max_page_count: 0,
         delete_flg: 0
+    })
+    const [userError, setUserError] = useState<UserError>({
+        name: "",
+        email: "",
+        password: "",
+        max_total_price: "",
+        max_page_count: "",
     })
 
     const emailValidate = (email: string) =>
@@ -44,7 +51,6 @@ const useUser = () => {
                 if (res.data.status === 200) {
                     SET_ALERT({open: true, type: "success", message: "ユーザーを登録しました"})
                     SET_REFRESH((prev) => prev + 1)
-                    console.log(res.data.users)
                 } else {
                     SET_ALERT({open: true, type: "error", message: "ユーザー登録時にエラーが発生しました"})
                     console.error(res.data.error)
@@ -59,8 +65,8 @@ const useUser = () => {
         axios.patch(route('users.update', data.id), data)
             .then((res) => {
                 if (res.data.status === 200) {
-                    SET_REFRESH((prev) => prev + 1)
                     SET_ALERT({open: true, type: "success", message: "データを更新しました"})
+                    SET_REFRESH((prev) => prev + 1)
                 } else {
                     SET_ALERT({open: true, type: "error", message: "更新中にエラーが発生しました"})
                     console.error(res.data.error)
@@ -77,6 +83,8 @@ const useUser = () => {
         users,
         userData,
         setUserData,
+        userError,
+        setUserError,
         getAllUsers,
         registUser,
         updateUser
