@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
 Route::controller(PaymentController::class)->prefix('payments')->middleware(['auth'])->group(function() {
     Route::get('/getUserAllPayments', 'getUserAllPayments')->name('payments.get');
     Route::post('/store', 'store')->name('payments.store');
+    Route::post('/storeReceipt', 'storeReceiptData')->name('payments.storeReceipt');
     Route::post('/destroy', 'destroy')->name('payments.destroy');
     Route::patch('/{id}/update', 'update')->name('payments.update');
     Route::post('/{id}/joinTags', 'joinTags')->name('payments.joinTags');

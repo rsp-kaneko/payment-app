@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ReceiptRequest;
 use App\Models\Payment;
+use App\Models\Receipt;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -28,6 +33,9 @@ class PaymentController extends Controller
             $max_page_count = Auth::user()->max_page_count;
 
             $query = Auth::user()->payments()
+                ->with(['receipt' => function ($q) {
+                    $q->where('delete_flg', 0);
+                }])
                 ->where('delete_flg', 0)
                 ->when($keyword, function ($query, $keyword) {
                     return $query->where('title', 'LIKE', "%{$keyword}%");
@@ -97,6 +105,46 @@ class PaymentController extends Controller
     }
 
     /**
+     * レシート読み取り登録
+     */
+    public function storeReceiptData(ReceiptRequest $request)
+    {
+        try {
+            if (!$request->validated()) {
+                Log::error('[ERROR] /storeReceiptData', ['error' => 'Request値に誤りがあります']);
+                return response()->json([
+                    'error' => 'Request値に誤りがあります'
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+            DB::beginTransaction();
+            $user_id = Auth::id();
+            $payment = Payment::create([
+                'user_id' => $user_id,
+                'title' => $request->input('shopName'),
+                'price' => $request->input('totalAmount'),
+                'payment_date' => $request->input('date'),
+                'delete_flg' => 0,
+            ]);
+            Receipt::create([
+                'payment_id' => $payment->id,
+                'items' => json_encode($request->input('items')),
+                'delete_flg' => 0,
+            ]);
+            DB::commit();
+
+            return response()->json([], Response::HTTP_OK);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('[ERROR] /storeReceiptData', ['error' => $e->getMessage()]);
+            return response()->json([
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, int $id)
@@ -136,6 +184,10 @@ class PaymentController extends Controller
             if (is_array($id_list) && !empty($id_list)) {
                 foreach ($id_list as $id) {
                     $payment = Payment::findOrFail($id);
+                    $receipt = $payment->receipt()->first();
+                    if ($receipt != null) {
+                        $receipt->update(['delete_flg' => 1]);
+                    }
                     $payment->update([
                         'delete_flg' => 1
                     ]);

@@ -1,4 +1,5 @@
 import { PaginateLink, PaginateMeta } from "./paginate"
+import { ReceiptData } from "./receipt"
 
 export type Payment = {
     id: number
@@ -7,6 +8,7 @@ export type Payment = {
     price: number
     payment_date: string
     delete_flg: string
+    receipt: ReceiptData
     created_at: string
     updated_at: string
 }

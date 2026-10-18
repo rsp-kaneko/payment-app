@@ -44,76 +44,138 @@ const PcAside: FC<Props> = (props) => {
     }
 
     return (
-        <aside>
-            <Box sx={{ height: {xs: 160, md: 120}, mt: 2, padding: "16px", color: "#fff" }}>
-                <IconButton
-                    onClick={() => SET_OPEN_ASIDE(false)}
-                    sx={{
-                        color: "#fff",
-                        mb: 2,
-                        display: {md: "none"}
-                    }}
-                >
-                    <i className="fa-solid fa-angles-left"></i>
-                    <Typography>閉じる</Typography>
-                </IconButton>
-                <Box sx={{display: "flex", alignItems: "end"}}>
-                    <img src="/favicon.ico" width="64px" />
-                    <Typography component="span" sx={{fontSize: "1.3rem", fontWeight: "bold"}}>帳簿管理システム</Typography>
+        <aside style={{ height: "100%", display: "flex", flexDirection: "column", background: "linear-gradient(180deg, #1976d2 0%, #1565c0 100%)", color: "#fff" }}>
+            {/* 上部ヘッダー（ロゴ＆タイトル） */}
+            <Box sx={{ p: 2.5, pb: 2, borderBottom: "1px solid rgba(255, 255, 255, 0.15)" }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                        <img src="/favicon.ico" width="34px" height="34px" style={{ borderRadius: 6 }} />
+                        <Typography component="span" sx={{ fontSize: "1.15rem", fontWeight: "bold", letterSpacing: "0.02em" }}>
+                            帳簿管理システム
+                        </Typography>
+                    </Box>
+                    <IconButton
+                        onClick={() => SET_OPEN_ASIDE(false)}
+                        size="small"
+                        sx={{
+                            color: "rgba(255, 255, 255, 0.8)",
+                            display: { md: "none" },
+                            "&:hover": { bgcolor: "rgba(255, 255, 255, 0.15)", color: "#fff" }
+                        }}
+                    >
+                        <i className="fa-solid fa-xmark"></i>
+                    </IconButton>
                 </Box>
             </Box>
 
-            {user.role_id == 1 && (
-                <AsideButton active={route().current("users.index")} onClick={handleOpenUserManager}>
-                    <Box>
-                        <i className="fa-solid fa-user-gear mr-3"></i>
-                        ユーザー管理
+            {/* ナビゲーションメニュー */}
+            <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1, flex: 1, overflowY: "auto" }}>
+                <AsideButton active={route().current("top")} onClick={handleDataPageEvent}>
+                    <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+                        <Box sx={{ width: 24, textAlign: "center", mr: 1.5, display: "inline-flex", justifyContent: "center" }}>
+                            <i className="fa-solid fa-database"></i>
+                        </Box>
+                        データ
                     </Box>
                 </AsideButton>
-            )}
-            {route().current("top") && (
-                <>
-                    <AsideButton active={paymentParams?.searchType === "all"} onClick={() => setOpenSearchDialog(true)}>
-                        <Box>
-                            <i className="fa-solid fa-magnifying-glass mr-3"></i>
-                            全期間検索
-                            {paymentParams?.searchType === "all" && (
-                                <i className="fa-solid fa-angles-right ml-3" style={{color: "#1976d2"}}></i>
-                            )}
+
+                {route().current("top") && (
+                    <>
+                        <AsideButton active={paymentParams?.searchType === "all"} onClick={() => setOpenSearchDialog(true)}>
+                            <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+                                <Box sx={{ width: 24, textAlign: "center", mr: 1.5, display: "inline-flex", justifyContent: "center" }}>
+                                    <i className="fa-solid fa-magnifying-glass"></i>
+                                </Box>
+                                全期間検索
+                                {paymentParams?.searchType === "all" && (
+                                    <Box sx={{ ml: "auto", fontSize: "0.75rem", bgcolor: "#1976d2", color: "#fff", px: 1, py: 0.2, borderRadius: 1, fontWeight: "bold" }}>
+                                        表示中
+                                    </Box>
+                                )}
+                            </Box>
+                        </AsideButton>
+
+                        <AsideButton active={OPEN_TAG} onClick={handleOpenTag}>
+                            <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+                                <Box sx={{ width: 24, textAlign: "center", mr: 1.5, display: "inline-flex", justifyContent: "center" }}>
+                                    <i className="fa-solid fa-tags"></i>
+                                </Box>
+                                タグ詳細
+                                {OPEN_TAG && (
+                                    <Box sx={{ ml: "auto", fontSize: "0.75rem", bgcolor: "#ef4444", color: "#fff", px: 1, py: 0.2, borderRadius: 1, fontWeight: "bold" }}>
+                                        解除
+                                    </Box>
+                                )}
+                            </Box>
+                        </AsideButton>
+                    </>
+                )}
+
+                {user.role_id == 1 && (
+                    <AsideButton active={route().current("users.index")} onClick={handleOpenUserManager}>
+                        <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+                            <Box sx={{ width: 24, textAlign: "center", mr: 1.5, display: "inline-flex", justifyContent: "center" }}>
+                                <i className="fa-solid fa-user-gear"></i>
+                            </Box>
+                            ユーザー管理
                         </Box>
                     </AsideButton>
-                    <AsideButton active={OPEN_TAG} onClick={handleOpenTag}>
-                        <Box>
-                            <i className="fa-solid fa-tags mr-3"></i>
-                            タグ詳細
-                            {OPEN_TAG && (
-                                <Typography component="span" sx={{ color: "#f44336", fontSize: "inherit", marginLeft: 3, fontWeight: "bold" }}>
-                                    解除
-                                    <i className="fa-solid fa-angles-right ml-3"></i>
-                                </Typography>
-                            )}
+                )}
+            </Box>
+
+            {/* 下部フッターエリア（ユーザー情報・設定・ログアウト） */}
+            <Box sx={{ p: 2, pt: 1.5, borderTop: "1px solid rgba(255, 255, 255, 0.15)", display: "flex", flexDirection: "column", gap: 1 }}>
+                {/* ログインユーザー表示 */}
+                <Box sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    p: 1.2,
+                    px: 1.5,
+                    borderRadius: 2,
+                    bgcolor: "rgba(255, 255, 255, 0.1)",
+                    backdropFilter: "blur(4px)"
+                }}>
+                    <Box sx={{
+                        width: 34,
+                        height: 34,
+                        borderRadius: "50%",
+                        bgcolor: "rgba(255, 255, 255, 0.2)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "0.95rem"
+                    }}>
+                        <i className="fa-solid fa-user"></i>
+                    </Box>
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                        <Typography sx={{ fontSize: "0.9rem", fontWeight: "bold", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {user.name}
+                        </Typography>
+                        <Typography sx={{ fontSize: "0.75rem", color: "rgba(255, 255, 255, 0.7)" }}>
+                            {user.role_id == 1 ? "管理者" : "一般ユーザー"}
+                        </Typography>
+                    </Box>
+                </Box>
+
+                <AsideButton active={route().current("profile.edit")} onClick={handleUserSettingEvent}>
+                    <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+                        <Box sx={{ width: 24, textAlign: "center", mr: 1.5, display: "inline-flex", justifyContent: "center" }}>
+                            <i className="fa-solid fa-gear"></i>
                         </Box>
-                    </AsideButton>
-                </>
-            )}
-            <AsideButton active={route().current("top")} onClick={handleDataPageEvent}>
-                <Box>
-                    <i className="fa-solid fa-database mr-3"></i>
-                    データ
-                </Box>
-            </AsideButton>
-            <AsideButton active={route().current("profile.edit")} onClick={handleUserSettingEvent}>
-                <Box>
-                    <i className="fa-solid fa-gear mr-3"></i>
-                    ユーザー設定
-                </Box>
-            </AsideButton>
-            <AsideButton onClick={handleLogoutEvent}>
-                <Box>
-                    <i className="fa-solid fa-right-from-bracket mr-3"></i>
-                    ログアウト
-                </Box>
-            </AsideButton>
+                        ユーザー設定
+                    </Box>
+                </AsideButton>
+
+                <AsideButton onClick={handleLogoutEvent}>
+                    <Box sx={{ display: "flex", alignItems: "center", width: "100%", color: "#fca5a5" }}>
+                        <Box sx={{ width: 24, textAlign: "center", mr: 1.5, display: "inline-flex", justifyContent: "center" }}>
+                            <i className="fa-solid fa-right-from-bracket"></i>
+                        </Box>
+                        ログアウト
+                    </Box>
+                </AsideButton>
+            </Box>
 
             {handleSearchEvent && (
                 <SearchFormDialog

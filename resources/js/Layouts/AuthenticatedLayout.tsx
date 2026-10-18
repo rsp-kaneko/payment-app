@@ -5,7 +5,6 @@ import RootContext from "@/Contexts/RootContext";
 import { PaymentParams } from "@/types/payment";
 import { Head } from "@inertiajs/react";
 import { Box } from "@mui/material";
-import axios from "axios";
 import { FC, ReactNode, useContext, useState } from "react";
 
 type Props = {

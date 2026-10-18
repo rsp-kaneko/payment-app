@@ -27,4 +27,9 @@ class Payment extends Model
     {
         return $this->belongsToMany(Tag::class)->withTimestamps();
     }
+
+    public function receipt()
+    {
+        return $this->hasOne(Receipt::class);
+    }
 }

@@ -3,6 +3,7 @@ import { FC, useMemo, useState } from "react"
 import AddPaymentFormDialog from "./AddPaymentFormDialog"
 import { PaymentParams } from "@/types/payment"
 import { usePage } from "@inertiajs/react"
+import ReadImageDialog from "./ReadImageDialog"
 
 type Props = {
     totalPrice: number
@@ -14,6 +15,7 @@ const PaymentCircularProgressCard: FC<Props> = (props) => {
     const user = usePage().props.auth.user
 
     const [openAddDialog, setOpenAddDialog] = useState(false)
+    const [openReadImageDialog, setOpenReadImageDialog] = useState(false)
 
     const onCloseAddDialog = () => setOpenAddDialog(false)
 
@@ -95,6 +97,12 @@ const PaymentCircularProgressCard: FC<Props> = (props) => {
                                 追加
                             </Box>
                         </Button>
+                        <Button variant="contained" fullWidth color="success" sx={{ mt: 2 }} onClick={() => setOpenReadImageDialog(true)}>
+                            <Box>
+                                <i className="fa-solid fa-image mr-3"></i>
+                                レシート画像読み取り
+                            </Box>
+                        </Button>
                     </Box>
 
                 </Box>
@@ -103,6 +111,11 @@ const PaymentCircularProgressCard: FC<Props> = (props) => {
             <AddPaymentFormDialog
                 open={openAddDialog}
                 onClose={onCloseAddDialog}
+            />
+
+            <ReadImageDialog
+                open={openReadImageDialog}
+                onClose={() => setOpenReadImageDialog(false)}
             />
         </Card>
     )

@@ -1,5 +1,6 @@
 import RootContext from "@/Contexts/RootContext"
 import { PaymentPaginate, PaymentParams, PaymentRequest } from "@/types/payment"
+import { ReceiptData } from "@/types/receipt"
 import { usePage } from "@inertiajs/react"
 import axios from "axios"
 import { useCallback, useContext, useState } from "react"
@@ -98,6 +99,26 @@ const usePayment = () => {
             .finally(() => setPaymentLoad(false))
     }, [])
 
+    ////////// 読み取ったレシートデータを登録
+    const addReceiptData = useCallback((resultData: ReceiptData | null) => {
+        setPaymentLoad(true)
+        axios.post(route("payments.storeReceipt"), resultData)
+            .then((res) => {
+                if (res.status === 200) {
+                    SET_REFRESH((prev) => prev + 1)
+                    SET_ALERT({open: true, type: "success", message: "1件登録しました"})
+                } else {
+                    SET_ALERT({open: true, type: "error", message: res.data.error})
+                    console.error(res.data.error)
+                }
+            })
+            .catch((error) => {
+                SET_ALERT({open: true, type: "error", message: "データの送信に失敗しました"})
+                console.error(error)
+            })
+            .finally(() => setPaymentLoad(false))
+    }, [])
+
     ////////// データ更新
     const updatePaymentData = useCallback((data: PaymentRequest) => {
         setPaymentLoad(true)
@@ -166,6 +187,7 @@ const usePayment = () => {
         handleSearchEvent,
         handleSearchClearEvent,
         addPaymentData,
+        addReceiptData,
         updatePaymentData,
         deletePaymentData,
         joinTags
