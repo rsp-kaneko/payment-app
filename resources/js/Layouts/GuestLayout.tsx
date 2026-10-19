@@ -3,7 +3,7 @@ import { PropsWithChildren } from 'react';
 
 export default function Guest({ children, title }: PropsWithChildren & {title?: string | null}) {
     return (
-        <div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 justify-center sm:pt-0">
+        <div className="flex min-h-screen flex-col items-center justify-center sm:pt-0">
             <Box sx={{mb: 5, textAlign: "center"}}>
                 <img src="./favicon.ico" width="160px" style={{margin: "0 auto"}} />
                 <Typography

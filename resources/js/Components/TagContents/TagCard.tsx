@@ -18,7 +18,7 @@ const TagCard: FC<Props> = (props) => {
     return (
         <Card sx={{
             bgcolor: tag.color,
-            height: 30,
+            height: 40,
             p: 0
         }}>
             <CardContent sx={{

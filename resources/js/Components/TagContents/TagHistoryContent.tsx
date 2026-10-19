@@ -1,5 +1,5 @@
 import useTag from "@/Hooks/useTag"
-import { Box, Button, CircularProgress, Grid } from "@mui/material"
+import { Box, Button, Card, CardContent, CircularProgress, Grid, Typography } from "@mui/material"
 import { FC, useContext, useEffect, useState } from "react"
 import TagSettingDialog from "./TagSettingDialog"
 import MonthlyTagDataCard from "./MonthlyTagDataCard"
@@ -36,15 +36,47 @@ const TagHistoryContent: FC<Props> = (props) => {
     }, [year, month, TAG_REFRESH])
 
     return (
-        <>
-            <Button
-                variant="contained"
-                color="success"
-                sx={{width: 120}}
-                onClick={() => setOpenSetting(true)}
-            >
-                タグ設定
-            </Button>
+        <Box sx={{
+            p: 2,
+            border: "4px solid #aaa",
+            minHeight: "100vh"
+        }}>
+            <Card sx={{
+                mb: 3,
+                width: {xs: "100%", md: 500}
+            }}>
+                <CardContent sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                    borderLeft: "8px solid #0a0",
+                    borderBottom: "1px solid #0a0"
+                }}>
+                    <Button
+                        variant="contained"
+                        color="success"
+                        size="large"
+                        sx={{width: 120}}
+                        onClick={() => setOpenSetting(true)}
+                    >
+                        タグ設定
+                    </Button>
+                    <Typography component="h5" sx={{
+                        fontWeight: "bold",
+                        fontSize: "1.1rem"
+                    }}>
+                        {month} 月のタグデータ：
+                        <Typography component="span" sx={{
+                            borderBottom: "2px solid #f00",
+                            fontWeight: "bold",
+                            fontSize: "1.2rem",
+                            color: "#f00"
+                        }}>
+                            {monthlyTags.length} 件
+                        </Typography>
+                    </Typography>
+                </CardContent>
+            </Card>
             {tagLoad ? (
                 <Box sx={{
                     display: "flex",
@@ -73,7 +105,7 @@ const TagHistoryContent: FC<Props> = (props) => {
                 open={openSetting}
                 onClose={onCloseSetting}
             />
-        </>
+        </Box>
     )
 }
 

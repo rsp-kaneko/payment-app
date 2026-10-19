@@ -49,7 +49,7 @@ const PcAside: FC<Props> = (props) => {
             <Box sx={{ p: 2.5, pb: 2, borderBottom: "1px solid rgba(255, 255, 255, 0.15)" }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                        <img src="/favicon.ico" width="34px" height="34px" style={{ borderRadius: 6 }} />
+                        <img src="./favicon.ico" width="34px" height="34px" style={{ borderRadius: 6 }} />
                         <Typography component="span" sx={{ fontSize: "1.15rem", fontWeight: "bold", letterSpacing: "0.02em" }}>
                             帳簿管理システム
                         </Typography>

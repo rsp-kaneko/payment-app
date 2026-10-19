@@ -1,6 +1,19 @@
 import RootContext from "@/Contexts/RootContext"
 import useTag from "@/Hooks/useTag"
-import { Box, Dialog, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, IconButton, InputBase, Paper, Radio, RadioGroup, Typography } from "@mui/material"
+import {
+    Box,
+    CircularProgress,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    FormControl,
+    IconButton,
+    InputBase,
+    Paper,
+    RadioGroup,
+    Typography,
+} from "@mui/material"
 import { FC, useContext } from "react"
 import TagCard from "./TagCard"
 import ColorLabelButton from "./ColorLabelButton"
@@ -45,76 +58,252 @@ const TagSettingDialog: FC<Props> = (props) => {
     }
 
     return (
-        <Dialog open={open} fullWidth>
-            <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Typography component="h5" sx={{ fontWeight: "bold" }}>タグ設定</Typography>
-                <IconButton onClick={onClose}>
-                    <i className="fa-solid fa-delete-left" style={{ color: "#f50" }}></i>
+        <Dialog
+            open={open}
+            onClose={onClose}
+            fullWidth
+            maxWidth="sm"
+            slotProps={{
+                paper: {
+                    sx: {
+                        borderRadius: 3,
+                        p: 1,
+                        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+                    },
+                },
+            }}
+        >
+            <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 1.5 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <Box
+                        sx={{
+                            width: 38,
+                            height: 38,
+                            borderRadius: "10px",
+                            bgcolor: "rgba(99, 102, 241, 0.1)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#6366f1",
+                            fontSize: "1.1rem",
+                        }}
+                    >
+                        <i className="fa-solid fa-tags"></i>
+                    </Box>
+                    <Box>
+                        <Typography component="h5" sx={{ fontWeight: "bold", fontSize: "1.125rem", color: "#1e293b" }}>
+                            タグ設定
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                            支払いデータの分類用タグを作成・管理できます
+                        </Typography>
+                    </Box>
+                </Box>
+                <IconButton
+                    onClick={onClose}
+                    size="small"
+                    sx={{
+                        color: "#94a3b8",
+                        "&:hover": {
+                            bgcolor: "rgba(0, 0, 0, 0.04)",
+                            color: "#475569",
+                        },
+                    }}
+                >
+                    <i className="fa-solid fa-xmark fa-lg"></i>
                 </IconButton>
             </DialogTitle>
-            <DialogContent>
-                <Box>
+
+            <DialogContent sx={{ pt: 1, px: 2 }}>
+                {/* 新規登録セクション */}
+                <Box
+                    sx={{
+                        p: 2.5,
+                        bgcolor: "#f8fafc",
+                        borderRadius: 2.5,
+                        border: "1px solid #e2e8f0",
+                        mb: 3,
+                    }}
+                >
+                    <Typography
+                        variant="subtitle2"
+                        sx={{ fontWeight: "bold", color: "#475569", mb: 1.5, display: "flex", alignItems: "center", gap: 1 }}
+                    >
+                        <i className="fa-solid fa-plus-circle fa-sm" style={{ color: "#6366f1" }}></i>
+                        新しいタグを作成
+                    </Typography>
+
                     {tagLoad ? (
-                        <Box sx={{textAlign: "center"}}>
-                            <Typography component="span">...Please Wait</Typography>
+                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 3, gap: 1.5 }}>
+                            <CircularProgress size={32} thickness={4} sx={{ color: "#6366f1" }} />
+                            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                                処理中...
+                            </Typography>
                         </Box>
                     ) : (
-                        <Box>
-                            <FormControl>
-                                <RadioGroup value={tagData.color} row onChange={(e) => setTagData((data) => ({...data, color: e.target.value}))}>
-                                    {COLOR_CODES.map((colorCode, index) => (
-                                        <ColorLabelButton
-                                            key={colorCode.name + index}
-                                            colorCode={colorCode}
-                                        />
-                                    ))}
-                                </RadioGroup>
-                            </FormControl>
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            {/* カラー選択 */}
+                            <Box>
+                                <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: "bold", mb: 0.5, display: "block" }}>
+                                    カラーを選択
+                                </Typography>
+                                <FormControl fullWidth>
+                                    <RadioGroup
+                                        value={tagData.color}
+                                        row
+                                        onChange={(e) => setTagData((data) => ({ ...data, color: e.target.value }))}
+                                        sx={{ gap: 0.5, flexWrap: "wrap" }}
+                                    >
+                                        {COLOR_CODES.map((colorCode, index) => (
+                                            <ColorLabelButton
+                                                key={colorCode.name + index}
+                                                colorCode={colorCode}
+                                            />
+                                        ))}
+                                    </RadioGroup>
+                                </FormControl>
+                            </Box>
+
+                            {/* 入力フォーム */}
                             <Paper
                                 component="form"
-                                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: "100%" }}
+                                onSubmit={(e) => {
+                                    e.preventDefault()
+                                    handleCreateTag()
+                                }}
+                                elevation={0}
+                                sx={{
+                                    p: "4px 8px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    width: "100%",
+                                    bgcolor: "#ffffff",
+                                    borderRadius: 2,
+                                    border: "1.5px solid",
+                                    borderColor: tagData.name ? "#6366f1" : "#cbd5e1",
+                                    transition: "all 0.2s ease",
+                                    "&:hover": {
+                                        borderColor: "#94a3b8",
+                                    },
+                                    "&:focus-within": {
+                                        borderColor: "#6366f1",
+                                        boxShadow: "0 0 0 3px rgba(99, 102, 241, 0.15)",
+                                    },
+                                }}
                             >
                                 <InputBase
-                                    sx={{ ml: 1, flex: 1 }}
-                                    placeholder="タグを追加"
+                                    sx={{ ml: 1, flex: 1, fontSize: "0.95rem" }}
+                                    placeholder="タグ名を入力（2〜10文字）"
                                     type="text"
                                     value={tagData.name}
                                     onChange={(e) =>
-                                        setTagData((data) => ({...data, name: e.target.value}))
+                                        setTagData((data) => ({ ...data, name: e.target.value }))
                                     }
                                 />
+                                {tagData.color && tagData.name && (
+                                    <Box
+                                        sx={{
+                                            bgcolor: tagData.color,
+                                            color: "#fff",
+                                            px: 1.5,
+                                            py: 0.25,
+                                            borderRadius: 1.5,
+                                            fontSize: "0.75rem",
+                                            fontWeight: "bold",
+                                            mr: 1,
+                                            whiteSpace: "nowrap",
+                                        }}
+                                    >
+                                        #{tagData.name}
+                                    </Box>
+                                )}
                                 <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
                                 <IconButton
                                     color="primary"
-                                    sx={{ p: '10px' }}
+                                    sx={{
+                                        p: "8px",
+                                        color: "#6366f1",
+                                        "&:hover": { bgcolor: "rgba(99, 102, 241, 0.08)" },
+                                    }}
                                     onClick={handleCreateTag}
                                 >
-                                    <i className="fa-solid fa-circle-plus"></i>
+                                    <i className="fa-solid fa-plus"></i>
                                 </IconButton>
                             </Paper>
                         </Box>
                     )}
                 </Box>
-                <Box sx={{mt: 2}}>
-                    <Box sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "start",
-                        flexWrap: "wrap",
-                        gap: 2
-                    }}>
+
+                {/* 登録済みタグセクション */}
+                <Box>
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1.5 }}>
+                        <Typography
+                            variant="subtitle2"
+                            sx={{ fontWeight: "bold", color: "#475569", display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                            <i className="fa-solid fa-list-ul fa-sm" style={{ color: "#6366f1" }}></i>
+                            登録済みタグ一覧
+                        </Typography>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                bgcolor: "#e2e8f0",
+                                color: "#475569",
+                                px: 1.2,
+                                py: 0.3,
+                                borderRadius: 10,
+                                fontWeight: "bold",
+                            }}
+                        >
+                            {TAGS.length} 件
+                        </Typography>
+                    </Box>
+
+                    <Box
+                        sx={{
+                            p: 2,
+                            borderRadius: 2.5,
+                            bgcolor: "#ffffff",
+                            border: "1px dashed #cbd5e1",
+                            minHeight: 120,
+                            maxHeight: 240,
+                            overflowY: "auto",
+                        }}
+                    >
                         {TAGS.length !== 0 ? (
-                            TAGS.map((tag) => (
-                                <TagCard
-                                    key={tag.id}
-                                    tag={tag}
-                                    deleteTag={deleteTag}
-                                />
-                            ))
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "flex-start",
+                                    flexWrap: "wrap",
+                                    gap: 1.5,
+                                }}
+                            >
+                                {TAGS.map((tag) => (
+                                    <TagCard
+                                        key={tag.id}
+                                        tag={tag}
+                                        deleteTag={deleteTag}
+                                    />
+                                ))}
+                            </Box>
                         ) : (
-                            <Box sx={{fontWeight: "bold", color: "#f00"}}>
-                                <i className="fa-solid fa-triangle-exclamation mr-1"></i>
-                                登録されたタグが存在しません
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    py: 3,
+                                    color: "#94a3b8",
+                                    gap: 1,
+                                }}
+                            >
+                                <i className="fa-regular fa-folder-open fa-2x"></i>
+                                <Typography variant="body2" sx={{ fontWeight: "500" }}>
+                                    登録されたタグはまだありません
+                                </Typography>
                             </Box>
                         )}
                     </Box>

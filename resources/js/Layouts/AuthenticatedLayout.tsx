@@ -4,7 +4,7 @@ import LoadingContent from "@/Components/Loading/LoadingContent";
 import RootContext from "@/Contexts/RootContext";
 import { PaymentParams } from "@/types/payment";
 import { Head } from "@inertiajs/react";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { FC, ReactNode, useContext, useState } from "react";
 
 type Props = {
@@ -20,6 +20,7 @@ const AuthenticatedLayout: FC<Props> = (props) => {
 
     const {OPEN_ASIDE} = useContext(RootContext)
     const [pageLoad, setPageLoad] = useState(false)
+    const lastUpdateDatetime: string = import.meta.env.VITE_LAST_UPDATE_DATETIME
 
     return (
         <Box sx={{ bgcolor: "#e5e5e5", minHeight: "100vh" }}>
@@ -76,7 +77,19 @@ const AuthenticatedLayout: FC<Props> = (props) => {
                 padding: {xs: 2, md: 4}
             }}>
                 {children}
+
+                <Box sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    pt: 8,
+                }}>
+                    <Typography component="p">&copy; Supported By Naoto</Typography>
+                    <Typography component="p" sx={{fontWeight: "bold"}}>最終更新日時：{lastUpdateDatetime}</Typography>
+                </Box>
             </Box>
+
 
         </Box>
     )

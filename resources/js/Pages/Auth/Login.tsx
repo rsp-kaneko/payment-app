@@ -45,7 +45,7 @@ export default function Login({
                 </div>
             )}
 
-            <form>
+            <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -106,7 +106,7 @@ export default function Login({
                             Forgot your password?
                         </Link>
                     )} */}
-                    <Button variant="contained" color="secondary" loading={processing} onClick={submit}>
+                    <Button type="submit" variant="contained" color="secondary" loading={processing}>
                         <i className="fa-solid fa-right-to-bracket mr-2"></i>
                         ログイン
                     </Button>

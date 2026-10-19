@@ -27,22 +27,16 @@ const Top: FC = () => {
     const [deleteIdList, setDeleteIdList] = useState<Array<number>>([])
 
     useEffect(() => {
-        if (!OPEN_TAG) {
-            getUserAllPayments(paymentParams)
-            setDeleteIdList([])
-        }
+        getUserAllPayments(paymentParams)
+        setDeleteIdList([])
     }, [paymentParams, REFRESH, OPEN_TAG])
 
     useEffect(() => {
-        if (OPEN_TAG) {
-            getAllTags()
-        } else {
-            getAllTags()
-            getMonthlyPaymentTagList({
-                year: paymentParams.year,
-                month: paymentParams.month
-            })
-        }
+        getAllTags()
+        getMonthlyPaymentTagList({
+            year: paymentParams.year,
+            month: paymentParams.month
+        })
     }, [TAG_REFRESH, paymentParams.year, paymentParams.month, OPEN_TAG])
 
     return (

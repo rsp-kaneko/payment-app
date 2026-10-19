@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { alpha, Box, Card, CardContent, CircularProgress, LinearProgress, Typography } from "@mui/material";
 import { FC } from "react";
 
 const LoadingContent: FC = () => {
@@ -6,24 +6,32 @@ const LoadingContent: FC = () => {
         <Box sx={{
             zIndex: 10000,
             position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)"
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            inset: 0
         }}>
-            <Box sx={{
-                width: 300,
-                height: 300,
-                margin: "auto",
-                position: "fixed",
-                inset: 0,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 2
+            <Card sx={{
+                width: 200,
+                height: 200,
+                backgroundColor: alpha("#333", 0.9),
+                borderRadius: 4,
+                position: "relative"
             }}>
-                <CircularProgress size="64px" sx={{ color: "#0ff" }} />
-                <Typography component="p" sx={{ color: "#fff" }}>読み込み中...</Typography>
-            </Box>
+                <CardContent sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: 2,
+                    height: '100%',
+                    color: "#fff"
+                }}>
+                    <LinearProgress color="info" sx={{width: '100%', position: 'absolute', top: 0, height: 8}}/>
+                    <CircularProgress size={64} color="info" />
+                    <Typography component='p' sx={{fontWeight: "bold", fontSize: "1.2rem"}}>Loading Now...</Typography>
+                </CardContent>
+            </Card>
         </Box>
     )
 }
