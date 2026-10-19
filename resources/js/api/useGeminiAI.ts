@@ -99,17 +99,28 @@ const useGeminiAI = () => {
                 err?.response?.status === 429 ||
                 /429|resource_exhausted|quota/i.test(err?.message || '');
 
+            const isUnavailable =
+                (err instanceof ApiError && err.status === 503) ||
+                err?.status === 503 ||
+                err?.response?.status === 503
+
             if (isQuotaExceeded) {
                 SET_ALERT({
                     open: true,
-                    type: "error",
-                    message: "APIの利用限度（リクエスト制限）を超過しました。しばらく時間を置いてから再度お試しください。"
+                    type: "warning",
+                    message: "APIの利用限度（リクエスト制限）を超過しました。しばらく時間を置いてから再度お試しください"
+                });
+            } else if (isUnavailable) {
+                SET_ALERT({
+                    open: true,
+                    type: "warning",
+                    message: "現在AIサーバーへのアクセスが集中している為、しばらく時間を置いてから再度お試しください"
                 });
             } else {
                 SET_ALERT({
                     open: true,
                     type: "warning",
-                    message: "読み取りに失敗しました、再度実行してください"
+                    message: "正しく読み取れませんでした、再度お試しください"
                 });
             }
         } finally {
