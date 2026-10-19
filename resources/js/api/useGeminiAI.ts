@@ -1,6 +1,6 @@
 import RootContext from "@/Contexts/RootContext";
 import { ReceiptData } from "@/types/receipt";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ApiError } from "@google/genai";
 import { useCallback, useContext, useState } from "react";
 
 
@@ -26,6 +26,24 @@ const useGeminiAI = () => {
         setResult(null)
         setLoading(true)
 
+        // Asia/Tokyo の現在日時・日付を取得
+        const nowJST = new Intl.DateTimeFormat('ja-JP', {
+            timeZone: 'Asia/Tokyo',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+        }).format(new Date());
+        const todayJST = new Intl.DateTimeFormat('ja-JP', {
+            timeZone: 'Asia/Tokyo',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        }).format(new Date()).replace(/\//g, '-');
+
         try {
             const response = await ai.models.generateContent({
                 model: 'gemini-3.8-flash',
@@ -33,18 +51,19 @@ const useGeminiAI = () => {
                     {
                         inlineData: {
                             data: base64Data,
-                            mimeType: mimeType
-                        }
+                            mimeType: mimeType,
+                        },
                     },
                     'このレシート画像から、店舗名、日付、合計金額、購入した品目（品名、単価、数量）を抽出し、指定されたJSONフォーマットで出力してください。'
                 ],
                 config: {
+                    systemInstruction: `タイムゾーンは Asia/Tokyo です。現在日時は ${nowJST} です。`,
                     responseMimeType: 'application/json',
                     responseSchema: {
                         type: 'OBJECT',
                         properties: {
                             shopName: { type: 'STRING', description: '店舗名' },
-                            date: { type: 'STRING', description: '購入日時（YYYY-MM-DD形式、不明ならそのまま）' },
+                            date: { type: 'STRING', description: `購入日時（YYYY-MM-DD形式。基準日は ${todayJST} (Asia/Tokyo)。年が不明なら基準日の年、月が不明なら基準日の月、日が不明なら基準日の日をそれぞれ使用すること。）` },
                             totalAmount: { type: 'INTEGER', description: '合計金額（税込み）' },
                             items: {
                                 type: 'ARRAY',
@@ -68,11 +87,31 @@ const useGeminiAI = () => {
             if (!jsonText) {throw new Error('APIから空のレスポンスが返却されました。')}
 
             const parsedData: ReceiptData = JSON.parse(jsonText);
+            console.log(parsedData)
             setResult(parsedData);
 
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            SET_ALERT({open: true, type: "error", message: "レシートの読み取りに失敗しました"})
+
+            const isQuotaExceeded =
+                (err instanceof ApiError && err.status === 429) ||
+                err?.status === 429 ||
+                err?.response?.status === 429 ||
+                /429|resource_exhausted|quota/i.test(err?.message || '');
+
+            if (isQuotaExceeded) {
+                SET_ALERT({
+                    open: true,
+                    type: "error",
+                    message: "APIの利用限度（リクエスト制限）を超過しました。しばらく時間を置いてから再度お試しください。"
+                });
+            } else {
+                SET_ALERT({
+                    open: true,
+                    type: "warning",
+                    message: "読み取りに失敗しました、再度実行してください"
+                });
+            }
         } finally {
             setLoading(false);
         }
