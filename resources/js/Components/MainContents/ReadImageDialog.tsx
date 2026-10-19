@@ -100,7 +100,7 @@ const ReadImageDialog: FC<Props> = ({open, onClose}) => {
                                 color="success"
                                 onClick={handleScanReceipt}
                                 disabled={loading}
-                                startIcon={loading ? <CircularProgress size={18} color="inherit" /> : <i className="fa-solid fa-wand-magic-sparkles"></i>}
+                                startIcon={loading ? <CircularProgress size={18} color="inherit" /> : undefined}
                             >
                                 {loading ? '解析中...' : 'レシートを解析する'}
                             </Button>
@@ -220,7 +220,7 @@ const ReadImageDialog: FC<Props> = ({open, onClose}) => {
                             onClose()
                         }}
                         disabled={paymentLoad}
-                        startIcon={paymentLoad ? <CircularProgress size={18} color="inherit" /> : <i className="fa-solid fa-check"></i>}
+                        startIcon={paymentLoad ? <CircularProgress size={18} color="inherit" /> : undefined}
                     >
                         {paymentLoad ? "登録中..." : "支出データに登録する"}
                     </Button>
