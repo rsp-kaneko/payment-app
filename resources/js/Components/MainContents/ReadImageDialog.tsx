@@ -1,14 +1,10 @@
 import useGeminiAI from "@/api/useGeminiAI";
-import RootContext from "@/Contexts/RootContext"
 import usePayment from "@/Hooks/usePayment"
-import { GoogleGenAI } from "@google/genai";
 import {
   Box,
   Card,
-  CardContent,
   CardMedia,
   CircularProgress,
-  Alert,
   Table,
   TableBody,
   TableCell,
@@ -16,7 +12,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Divider,
   Grid,
   Dialog,
   DialogTitle,

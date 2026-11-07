@@ -1,4 +1,4 @@
-import { ReceiptData, ReceiptItem } from "@/types/receipt"
+import { ReceiptItem } from "@/types/receipt"
 import {
     Box,
     Button,

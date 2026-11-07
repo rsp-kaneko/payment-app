@@ -1,8 +1,11 @@
 import RootContext from "@/Contexts/RootContext";
 import usePayment from "@/Hooks/usePayment";
 import { Payment } from "@/types/payment";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, Input, InputLabel, Stack, Typography } from "@mui/material";
+import { Button, DialogActions, Divider } from "@mui/material";
 import { FC, useContext, useEffect } from "react";
+import CustomDialog from "../Dialogs/CustomDialog";
+import FormItem from "../TextItem/FormItem";
+import CustomDialogContent from "../Dialogs/CustomDialogContent";
 
 type Props = {
     payment: Payment
@@ -13,7 +16,7 @@ type Props = {
 const EditPaymentFormDialog: FC<Props> = (props) => {
     const { payment, open, onClose } = props
 
-    const { REFRESH, SET_ALERT } = useContext(RootContext)
+    const { SET_ALERT } = useContext(RootContext)
     const {
         paymentLoad,
         paymentData,
@@ -54,69 +57,43 @@ const EditPaymentFormDialog: FC<Props> = (props) => {
     }
 
     return (
-        <Dialog open={open} fullWidth>
-            <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Typography component="span" sx={{ fontWeight: "bold" }}>データ更新</Typography>
-                <IconButton onClick={onClose}>
-                    <i className="fa-solid fa-delete-left" style={{ color: "#f50" }}></i>
-                </IconButton>
-            </DialogTitle>
-            <DialogContent>
-                <Stack spacing={2}>
-                    <FormControl variant="standard">
-                        <InputLabel>タイトル</InputLabel>
-                        <Input
-                            type="text"
-                            value={paymentData.title}
-                            startAdornment={
-                                <i className="fa-regular fa-file-lines mr-3"></i>
-                            }
-                            onChange={(e) =>
-                                setPaymentData((prev) => ({...prev, title: e.target.value}))
-                            }
-                        />
-                    </FormControl>
-                    <FormControl variant="standard">
-                        <InputLabel>金額</InputLabel>
-                        <Input
-                            type="text"
-                            value={paymentData.price! > 0 ? paymentData.price : 0}
-                            startAdornment={
-                                <i className="fa-solid fa-yen-sign mr-3"></i>
-                            }
-                            onChange={(e) =>
-                                setPaymentData((prev) => ({...prev, price: Number(e.target.value)}))
-                            }
-                        />
-                    </FormControl>
-                    <FormControl variant="standard">
-                        <InputLabel>支払い日</InputLabel>
-                        <Input
-                            type="date"
-                            value={paymentData.payment_date}
-                            startAdornment={
-                                <i className="fa-solid fa-calendar-days mr-3"></i>
-                            }
-                            onChange={(e) =>
-                                setPaymentData((prev) => ({...prev, payment_date: e.target.value}))
-                            }
-                        />
-                    </FormControl>
-                </Stack>
-            </DialogContent>
+        <CustomDialog
+            open={open}
+            onClose={onClose}
+            title="データ更新"
+            subTitle="支払いデータの編集機能"
+            icon={<i className="fa-solid fa-piggy-bank"></i>}
+            color="#070"
+        >
+            <CustomDialogContent>
+                <FormItem
+                    type="text"
+                    label="タイトル"
+                    icon={<i className="fa-regular fa-file-lines"></i>}
+                    value={paymentData.title}
+                    onChange={(e) => setPaymentData((prev) => ({...prev, title: e.target.value}))}
+                />
+
+                <FormItem
+                    type="number"
+                    label="金額"
+                    icon={<i className="fa-solid fa-yen-sign"></i>}
+                    value={paymentData.price || ""}
+                    onChange={(e) => setPaymentData((prev) => ({...prev, price: Number(e.target.value)}))}
+                />
+
+                <FormItem
+                    type="date"
+                    label="支払い日"
+                    icon={<i className="fa-solid fa-calendar-days"></i>}
+                    value={paymentData.payment_date}
+                    onChange={(e) => setPaymentData((prev) => ({...prev, payment_date: e.target.value}))}
+                />
+            </CustomDialogContent>
+            <Divider />
             <DialogActions>
                 <Button
                     variant="contained"
-                    color="error"
-                    fullWidth
-                    onClick={handleDataReset}
-                >
-                    <i className="fa-solid fa-eraser mr-3"></i>
-                    リセット
-                </Button>
-                <Button
-                    variant="contained"
-                    fullWidth
                     color="success"
                     loading={paymentLoad}
                     onClick={handleEditPaymentData}
@@ -124,8 +101,16 @@ const EditPaymentFormDialog: FC<Props> = (props) => {
                     <i className="fa-solid fa-paper-plane mr-3"></i>
                     更新
                 </Button>
+                <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleDataReset}
+                >
+                    <i className="fa-solid fa-eraser mr-3"></i>
+                    リセット
+                </Button>
             </DialogActions>
-        </Dialog>
+        </CustomDialog>
     )
 }
 

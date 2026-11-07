@@ -63,7 +63,7 @@ const useGeminiAI = () => {
                         type: 'OBJECT',
                         properties: {
                             shopName: { type: 'STRING', description: '店舗名' },
-                            date: { type: 'STRING', description: `購入日時（YYYY-MM-DD形式。基準日は ${todayJST} (Asia/Tokyo)。年が不明なら基準日の年、月が不明なら基準日の月、日が不明なら基準日の日をそれぞれ使用すること。）` },
+                            date: { type: 'STRING', description: `購入日時、又はお届け日（YYYY-MM-DD形式。基準日は ${todayJST} (Asia/Tokyo)。年が不明なら基準日の年、月が不明なら基準日の月、日が不明なら基準日の日をそれぞれ使用すること。）` },
                             totalAmount: { type: 'INTEGER', description: '合計金額（税込み）' },
                             items: {
                                 type: 'ARRAY',

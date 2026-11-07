@@ -48,6 +48,7 @@ const PaginationContent: FC<Props> = (props) => {
                                 </Button>
                             )}
                             <Button
+                                variant="contained"
                                 disabled={paymentParams.searchType === "all"}
                                 onClick={() => setOpenSearchDialog(true)}
                             >
